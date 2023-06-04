@@ -31,6 +31,7 @@ begin
 		f3 when "11", --or
 		f1 when others; --soma/subtração
 		
+	v <= a(3) XOR bn(3) XOR f4(3) --pode ser assim o codigo de overflow
 	v <= (a(3) and b(3) and not f4(3)) or (not a(3) and not b(3) and f4(3)) when s(0) = '0' else --faz a conta do overflow
 			'0' when s(0) = '1'; --n faz a conta do overflow
 	z <= not(f4(0) or f4(1) or f4(2) or f4(3)); 
