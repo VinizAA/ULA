@@ -17,7 +17,7 @@ architecture funcao of ula is
 	signal m: std_logic_vector (2 downto 0); --sinal de carry-out (próximo) 
 	signal f1, f2, f3, f4: std_logic_vector (3 downto 0); --saídas das operações
 	
---COMPONENTE--
+	--COMPONENTE--
 	component add4bits is 
 		port (a, b: in std_logic_vector(3 downto 0); --1º número/2º número
 			   s: in std_logic; --seleção de operação
@@ -25,7 +25,7 @@ architecture funcao of ula is
 			   cout: out std_logic; --carry-out
 				v: out std_logic); --flag de overflow
 	end component;
---------------	
+	--------------
 begin
 	res: add4bits PORT MAP (a, b, s(1), f1, c, v); --operação de soma 
 	
@@ -37,8 +37,14 @@ begin
 		f3 when "11", --quando selecionado 'OR', f4 (resposta final) recebe valor do OR dos 2 números
 		f1 when others; --quando não for 'AND' ou 'OR' f4 (resposta final) recebe valor da soma/subtração
 		
-	z <= not(f4(0) or f4(1) or f4(2) or f4(3)); --flag de zero
-	n <= f4(3); --flag de negativo
-	f <= f4; --resposta final vai para f
+	z <= not(f4(0) or f4(1) or f4(2) or f4(3)); --flag de zero: 'OR' entre os bits da resposta. Caso o número tiver qualquer bit = '1', o flag é zero
+	
+	with s select n <= 
+		f4(3) when "00", --quando a operação for 'SOMA', verifica o bit mais significativo do resultado
+		f4(3) when "10", --quando a operação for 'SUBTRAÇÃO', verifica o bit mais significativo do resultado
+		'0' when "01", --quando a operação for 'AND', flag de zero = '0'
+		'0' when "11"; --quando a operação for 'OR', flag de zero = '0'
+		
+	f <= f4; --resposta final vai para f (oficializar)
 end funcao;
 ----------------
